@@ -1,43 +1,31 @@
 {
     "displayName": "Checkout counts for all books in course reserves",
     "description": "Modified version of Lev's function Created by Michael for all course reserves.",
-    "instructions": "Enter date range and optionally filter by course codes. Use the exclusions dropdown to filter out specific course types. For no date entered, counts all time.",
+    "instructions": "Enter date range. For exclusions, type the code (e.g., POP, LAW) or leave blank.",
     "parameters": [
         {
             "name": "start_date",
-            "displayName": "Earliest date of circulation activity",
+            "displayName": "Earliest date",
             "type": "date",
             "required": false
         },
         {
             "name": "end_date",
-            "displayName": "Latest date of circulation activity",
+            "displayName": "Latest date",
             "type": "date",
             "required": false
         },
         {
-            "name": "course_codes",
-            "displayName": "Course codes (select one or more)",
-            "type": "enum",
-            "required": false,
-            "multiple": true,
-            "valueSource": {
-                "type": "query",
-                "query": "SELECT DISTINCT course_number FROM folio_courses.coursereserves_courses__t__ WHERE course_number IS NOT NULL ORDER BY course_number"
-            }
+            "name": "course_code_filter",
+            "displayName": "Course Code Filter (Text)",
+            "type": "text",
+            "required": false
         },
         {
-            "name": "exclusions",
-            "displayName": "Exclude courses",
-            "type": "enum",
-            "required": false,
-            "multiple": true,
-            "values": [
-                {"value": "POP", "label": "POP courses"},
-                {"value": "LAW", "label": "Law/LAW courses"},
-                {"value": "NEW", "label": "NEW courses"},
-                {"value": "EMPTY", "label": "Empty/NULL course numbers"}
-            ]
+            "name": "exclusion_filter",
+            "displayName": "Exclude (Type POP, LAW, or NEW)",
+            "type": "text",
+            "required": false
         }
     ]
 }

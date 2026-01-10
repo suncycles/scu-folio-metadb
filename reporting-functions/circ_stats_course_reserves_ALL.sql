@@ -4,7 +4,7 @@ DROP FUNCTION IF EXISTS circ_stats_course_reserves_all;
 
 CREATE FUNCTION circ_stats_course_reserves_all(
     start_date date DEFAULT '1900-01-01',
-    end_date   date DEFAULT '2099-01-01',
+    end_date   date DEFAULT '2050-01-01',
     course_codes text DEFAULT NULL,
     exclusions text DEFAULT NULL
 )
@@ -33,23 +33,30 @@ LEFT JOIN folio_derived.instance_ext inst
 LEFT JOIN (
         SELECT 
             item_id,
-            COUNT(loan_id) AS clid
+            COUNT(id) AS clid -- Using id/loan_id from loans_items
         FROM folio_derived.loans_items
         WHERE 
-            date(loan_date) >= start_date
-            AND date(loan_date) <= end_date
+            (loan_date::date >= start_date OR start_date IS NULL)
+            AND (loan_date::date <= end_date OR end_date IS NULL)
         GROUP BY item_id
 ) lit
        ON lit.item_id = crrt.item_id
 WHERE 
     crrt.item_id IS NOT NULL
-    AND (exclusions IS NULL OR exclusions NOT LIKE '%POP%' OR crct.course_number != 'POP')
-    AND (exclusions IS NULL OR exclusions NOT LIKE '%LAW%' OR crct.course_number NOT IN ('Law', 'LAW'))
-    AND (exclusions IS NULL OR exclusions NOT LIKE '%NEW%' OR crct.course_number != 'NEW')
-    AND (exclusions IS NULL OR exclusions NOT LIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
+    -- Exclusion Logic: Checks if the keyword is present in the exclusions text string
+    AND (
+        exclusions IS NULL OR (
+            (NOT (exclusions ILIKE '%POP%') OR crct.course_number != 'POP') AND
+            (NOT (exclusions ILIKE '%LAW%') OR (crct.course_number NOT ILIKE 'Law' AND crct.course_number NOT ILIKE 'LAW')) AND
+            (NOT (exclusions ILIKE '%NEW%') OR crct.course_number != 'NEW') AND
+            (NOT (exclusions ILIKE '%EMPTY%') OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
+        )
+    )
+    -- Course Code Logic: Handles a comma-separated list of exact codes
     AND (
         course_codes IS NULL 
-        OR crct.course_number = ANY(string_to_array(course_codes, ','))
+        OR course_codes = ''
+        OR crct.course_number = ANY(string_to_array(replace(course_codes, ', ', ','), ','))
     )
 GROUP BY 
     iext.barcode, inst.title, crct.course_number, lit.clid
