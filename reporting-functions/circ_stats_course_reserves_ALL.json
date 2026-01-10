@@ -1,7 +1,7 @@
 {
     "displayName": "Checkout counts for all books in course reserves",
     "description": "Modified version of Lev's function Created by Michael for all course reserves.",
-    "instructions": "Enter date range and optionally filter by course codes. Use the exclusion options to filter out specific course types. For no date entered, counts all time.",
+    "instructions": "Enter date range and optionally filter by course codes. Use the exclusions dropdown to filter out specific course types. For no date entered, counts all time.",
     "parameters": [
         {
             "name": "start_date",
@@ -27,48 +27,17 @@
             }
         },
         {
-            "name": "exclude_pop",
-            "displayName": "Exclude 'POP' courses",
+            "name": "exclusions",
+            "displayName": "Exclude courses",
             "type": "enum",
             "required": false,
+            "multiple": true,
             "values": [
-                {"value": "true", "label": "Yes"},
-                {"value": "false", "label": "No"}
-            ],
-            "default": "false"
-        },
-        {
-            "name": "exclude_law",
-            "displayName": "Exclude 'Law' and 'LAW' courses",
-            "type": "enum",
-            "required": false,
-            "values": [
-                {"value": "true", "label": "Yes"},
-                {"value": "false", "label": "No"}
-            ],
-            "default": "false"
-        },
-        {
-            "name": "exclude_new",
-            "displayName": "Exclude 'NEW' courses",
-            "type": "enum",
-            "required": false,
-            "values": [
-                {"value": "true", "label": "Yes"},
-                {"value": "false", "label": "No"}
-            ],
-            "default": "false"
-        },
-        {
-            "name": "exclude_empty",
-            "displayName": "Exclude empty/NULL course numbers",
-            "type": "enum",
-            "required": false,
-            "values": [
-                {"value": "true", "label": "Yes"},
-                {"value": "false", "label": "No"}
-            ],
-            "default": "false"
+                {"value": "POP", "label": "POP courses"},
+                {"value": "LAW", "label": "Law/LAW courses"},
+                {"value": "NEW", "label": "NEW courses"},
+                {"value": "EMPTY", "label": "Empty/NULL course numbers"}
+            ]
         }
     ]
 }

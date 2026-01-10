@@ -6,10 +6,7 @@ CREATE FUNCTION circ_stats_course_reserves_all(
     start_date date DEFAULT '1900-01-01',
     end_date   date DEFAULT '2099-01-01',
     course_codes text DEFAULT NULL,
-    exclude_pop boolean DEFAULT false,
-    exclude_law boolean DEFAULT false,
-    exclude_new boolean DEFAULT false,
-    exclude_empty boolean DEFAULT false
+    exclusions text DEFAULT NULL
 )
 RETURNS TABLE(
     item_barcode text,
@@ -46,10 +43,10 @@ LEFT JOIN (
        ON lit.item_id = crrt.item_id
 WHERE 
     crrt.item_id IS NOT NULL
-    AND (NOT exclude_pop OR crct.course_number != 'POP')
-    AND (NOT exclude_law OR crct.course_number NOT IN ('Law', 'LAW'))
-    AND (NOT exclude_new OR crct.course_number != 'NEW')
-    AND (NOT exclude_empty OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
+    AND (exclusions IS NULL OR exclusions NOT LIKE '%POP%' OR crct.course_number != 'POP')
+    AND (exclusions IS NULL OR exclusions NOT LIKE '%LAW%' OR crct.course_number NOT IN ('Law', 'LAW'))
+    AND (exclusions IS NULL OR exclusions NOT LIKE '%NEW%' OR crct.course_number != 'NEW')
+    AND (exclusions IS NULL OR exclusions NOT LIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
     AND (
         course_codes IS NULL 
         OR crct.course_number = ANY(string_to_array(course_codes, ','))
