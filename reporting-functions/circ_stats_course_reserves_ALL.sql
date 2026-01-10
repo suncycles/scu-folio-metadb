@@ -18,12 +18,12 @@ AS $$
 SELECT 
     iext.barcode AS item_barcode,
     inst.title AS instance_title,
-    crct.coursenumber AS course_number,
+    crct.course_number AS course_number,
     COALESCE(lit.clid, 0) AS circ_count
 FROM
     folio_courses.coursereserves_courses__t crct
 LEFT JOIN folio_courses.coursereserves_reserves__t crrt
-       ON crct.courselistingid = crrt.courselistingid
+       ON crct.courselistingid = crrt.course_listing_id
 LEFT JOIN folio_derived.item_ext iext
        ON crrt.itemid = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt
@@ -46,20 +46,20 @@ WHERE
     -- Exclusion Logic
     AND (
         exclusions IS NULL OR (
-            (exclusions NOT ILIKE '%POP%' OR crct.coursenumber IS DISTINCT FROM 'POP') AND
-            (exclusions NOT ILIKE '%LAW%' OR (crct.coursenumber NOT ILIKE 'Law' AND crct.coursenumber NOT ILIKE 'LAW')) AND
-            (exclusions NOT ILIKE '%NEW%' OR crct.coursenumber IS DISTINCT FROM 'NEW') AND
-            (exclusions NOT ILIKE '%EMPTY%' OR (crct.coursenumber IS NOT NULL AND crct.coursenumber <> ''))
+            (exclusions NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
+            (exclusions NOT ILIKE '%LAW%' OR (crct.course_number NOT ILIKE 'Law' AND crct.course_number NOT ILIKE 'LAW')) AND
+            (exclusions NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
+            (exclusions NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
     )
     -- Course Code Logic
     AND (
         course_codes IS NULL 
         OR course_codes = ''
-        OR crct.coursenumber = ANY(string_to_array(course_codes, ','))
+        OR crct.course_number = ANY(string_to_array(course_codes, ','))
     )
 GROUP BY 
-    iext.barcode, inst.title, crct.coursenumber, lit.clid
+    iext.barcode, inst.title, crct.course_number, lit.clid
 $$
 LANGUAGE sql
 STABLE
