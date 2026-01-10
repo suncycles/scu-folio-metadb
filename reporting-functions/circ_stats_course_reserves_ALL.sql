@@ -33,7 +33,7 @@ LEFT JOIN folio_derived.instance_ext inst
 LEFT JOIN (
         SELECT 
             item_id,
-            COUNT(id) AS clid -- Using id/loan_id from loans_items
+            COUNT(loan_id) AS clid -- Changed back to loan_id
         FROM folio_derived.loans_items
         WHERE 
             (loan_date::date >= start_date OR start_date IS NULL)
@@ -43,16 +43,16 @@ LEFT JOIN (
        ON lit.item_id = crrt.item_id
 WHERE 
     crrt.item_id IS NOT NULL
-    -- Exclusion Logic: Checks if the keyword is present in the exclusions text string
+    -- Exclusion Logic
     AND (
         exclusions IS NULL OR (
-            (NOT (exclusions ILIKE '%POP%') OR crct.course_number != 'POP') AND
+            (NOT (exclusions ILIKE '%POP%') OR (crct.course_number IS DISTINCT FROM 'POP')) AND
             (NOT (exclusions ILIKE '%LAW%') OR (crct.course_number NOT ILIKE 'Law' AND crct.course_number NOT ILIKE 'LAW')) AND
-            (NOT (exclusions ILIKE '%NEW%') OR crct.course_number != 'NEW') AND
-            (NOT (exclusions ILIKE '%EMPTY%') OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
+            (NOT (exclusions ILIKE '%NEW%') OR (crct.course_number IS DISTINCT FROM 'NEW')) AND
+            (NOT (exclusions ILIKE '%EMPTY%') OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
     )
-    -- Course Code Logic: Handles a comma-separated list of exact codes
+    -- Course Code Logic
     AND (
         course_codes IS NULL 
         OR course_codes = ''
