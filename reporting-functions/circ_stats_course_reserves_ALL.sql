@@ -25,7 +25,7 @@ FROM
 LEFT JOIN folio_courses.coursereserves_reserves__t crrt
        ON crct.course_listing_id = crrt.course_listing_id
 LEFT JOIN folio_derived.item_ext iext
-       ON crrt.itemid = iext.item_id
+       ON crrt.item_id = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt
        ON iext.holdings_record_id = hrt.holdings_id
 LEFT JOIN folio_derived.instance_ext inst
@@ -40,9 +40,9 @@ LEFT JOIN (
             AND loan_date::date <= end_date
         GROUP BY item_id
 ) lit
-       ON lit.item_id = crrt.itemid
+       ON lit.item_id = crrt.item_id
 WHERE 
-    crrt.itemid IS NOT NULL
+    crrt.item_id IS NOT NULL
     -- Exclusion Logic
     AND (
         exclusions IS NULL OR (
