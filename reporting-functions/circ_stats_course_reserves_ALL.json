@@ -29,30 +29,46 @@
         {
             "name": "exclude_pop",
             "displayName": "Exclude 'POP' courses",
-            "type": "boolean",
+            "type": "enum",
             "required": false,
-            "default": false
+            "values": [
+                {"value": "true", "label": "Yes"},
+                {"value": "false", "label": "No"}
+            ],
+            "default": "false"
         },
         {
             "name": "exclude_law",
             "displayName": "Exclude 'Law' and 'LAW' courses",
-            "type": "boolean",
+            "type": "enum",
             "required": false,
-            "default": false
+            "values": [
+                {"value": "true", "label": "Yes"},
+                {"value": "false", "label": "No"}
+            ],
+            "default": "false"
         },
         {
             "name": "exclude_new",
             "displayName": "Exclude 'NEW' courses",
-            "type": "boolean",
+            "type": "enum",
             "required": false,
-            "default": false
+            "values": [
+                {"value": "true", "label": "Yes"},
+                {"value": "false", "label": "No"}
+            ],
+            "default": "false"
         },
         {
             "name": "exclude_empty",
             "displayName": "Exclude empty/NULL course numbers",
-            "type": "boolean",
+            "type": "enum",
             "required": false,
-            "default": false
+            "values": [
+                {"value": "true", "label": "Yes"},
+                {"value": "false", "label": "No"}
+            ],
+            "default": "false"
         }
     ]
 }
