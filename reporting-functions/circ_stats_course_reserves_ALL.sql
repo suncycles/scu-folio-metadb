@@ -23,7 +23,7 @@ SELECT
 FROM
     folio_courses.coursereserves_courses__t crct
 LEFT JOIN folio_courses.coursereserves_reserves__t crrt
-       ON crct.courselistingid = crrt.course_listing_id
+       ON crct.course_listing_id = crrt.course_listing_id
 LEFT JOIN folio_derived.item_ext iext
        ON crrt.itemid = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt
