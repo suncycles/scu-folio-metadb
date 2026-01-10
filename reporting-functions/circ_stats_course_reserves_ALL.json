@@ -1,31 +1,33 @@
 {
     "displayName": "Checkout counts for all books in course reserves",
     "description": "Modified version of Lev's function Created by Michael for all course reserves.",
-    "instructions": "Enter date range. For exclusions, type the code (e.g., POP, LAW) or leave blank.",
+    "instructions": "Enter date range to count circulations. Optionally filter by course codes or exclude specific course types. Leave fields blank to include all courses and all time periods.",
     "parameters": [
         {
             "name": "start_date",
-            "displayName": "Earliest date",
+            "displayName": "Earliest date of circulation activity",
             "type": "date",
             "required": false
         },
         {
             "name": "end_date",
-            "displayName": "Latest date",
+            "displayName": "Latest date of circulation activity",
             "type": "date",
             "required": false
         },
         {
             "name": "course_code_filter",
-            "displayName": "Course Code Filter (Text)",
+            "displayName": "Filter by course codes (comma-separated, e.g., MATH101,ENG202)",
             "type": "text",
-            "required": false
+            "required": false,
+            "placeholder": "e.g., MATH101,ENG202,HIST303"
         },
         {
             "name": "exclusion_filter",
-            "displayName": "Exclude (Type POP, LAW, or NEW)",
+            "displayName": "Exclude course types (comma-separated: POP, LAW, NEW, EMPTY)",
             "type": "text",
-            "required": false
+            "required": false,
+            "placeholder": "e.g., POP,LAW or just POP"
         }
     ]
 }
