@@ -16,14 +16,14 @@
             "required": false
         },
         {
-            "name": "course_code_filter",
+            "name": "course_codes",
             "displayName": "Filter by course codes (comma-separated, e.g., MATH101,ENG202)",
             "type": "text",
             "required": false,
             "placeholder": "e.g., MATH101,ENG202,HIST303"
         },
         {
-            "name": "exclusion_filter",
+            "name": "exclusions",
             "displayName": "Exclude course types (comma-separated: POP, LAW, NEW, EMPTY)",
             "type": "text",
             "required": false,
