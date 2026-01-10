@@ -4,17 +4,24 @@ DROP FUNCTION IF EXISTS circ_stats_course_reserves_all;
 
 CREATE FUNCTION circ_stats_course_reserves_all(
     start_date date DEFAULT '1900-01-01',
-    end_date   date DEFAULT '2099-01-01'
+    end_date   date DEFAULT '2099-01-01',
+    course_codes text DEFAULT NULL,
+    exclude_pop boolean DEFAULT false,
+    exclude_law boolean DEFAULT false,
+    exclude_new boolean DEFAULT false,
+    exclude_empty boolean DEFAULT false
 )
 RETURNS TABLE(
     item_barcode text,
     instance_title text,
+    course_number text,
     circ_count numeric
 )
 AS $$
 SELECT 
     iext.barcode AS item_barcode,
     inst.title AS instance_title,
+    crct.course_number AS course_number,
     COALESCE(lit.clid, 0) AS circ_count
 FROM
     folio_courses.coursereserves_courses__t__ crct
@@ -38,11 +45,18 @@ LEFT JOIN (
 ) lit
        ON lit.item_id = crrt.item_id
 WHERE 
-    crrt.item_id IS NOT NULL  
+    crrt.item_id IS NOT NULL
+    AND (NOT exclude_pop OR crct.course_number != 'POP')
+    AND (NOT exclude_law OR crct.course_number NOT IN ('Law', 'LAW'))
+    AND (NOT exclude_new OR crct.course_number != 'NEW')
+    AND (NOT exclude_empty OR (crct.course_number IS NOT NULL AND crct.course_number != ''))
+    AND (
+        course_codes IS NULL 
+        OR crct.course_number = ANY(string_to_array(course_codes, ','))
+    )
 GROUP BY 
-    iext.barcode, inst.title, lit.clid
+    iext.barcode, inst.title, crct.course_number, lit.clid
 $$
 LANGUAGE sql
 STABLE
 PARALLEL SAFE;
-

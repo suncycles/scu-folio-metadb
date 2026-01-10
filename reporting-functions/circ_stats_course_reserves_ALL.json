@@ -1,7 +1,7 @@
 {
     "displayName": "Checkout counts for all books in course reserves",
     "description": "Modified version of Lev's function Created by Michael for all course reserves.",
-    "instructions": "Enter date range. Preserves original ordering. For no date entered, counts all time.",
+    "instructions": "Enter date range and optionally filter by course codes. Use the exclusion options to filter out specific course types. For no date entered, counts all time.",
     "parameters": [
         {
             "name": "start_date",
@@ -14,6 +14,45 @@
             "displayName": "Latest date of circulation activity",
             "type": "date",
             "required": false
+        },
+        {
+            "name": "course_codes",
+            "displayName": "Course codes (select one or more)",
+            "type": "enum",
+            "required": false,
+            "multiple": true,
+            "valueSource": {
+                "type": "query",
+                "query": "SELECT DISTINCT course_number FROM folio_courses.coursereserves_courses__t__ WHERE course_number IS NOT NULL ORDER BY course_number"
+            }
+        },
+        {
+            "name": "exclude_pop",
+            "displayName": "Exclude 'POP' courses",
+            "type": "boolean",
+            "required": false,
+            "default": false
+        },
+        {
+            "name": "exclude_law",
+            "displayName": "Exclude 'Law' and 'LAW' courses",
+            "type": "boolean",
+            "required": false,
+            "default": false
+        },
+        {
+            "name": "exclude_new",
+            "displayName": "Exclude 'NEW' courses",
+            "type": "boolean",
+            "required": false,
+            "default": false
+        },
+        {
+            "name": "exclude_empty",
+            "displayName": "Exclude empty/NULL course numbers",
+            "type": "boolean",
+            "required": false,
+            "default": false
         }
     ]
 }
