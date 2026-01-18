@@ -50,7 +50,17 @@ WHERE
     AND (
         $3 IS NULL 
         OR $3 = ''
-        OR crct.course_number = ANY(string_to_array($3, ','))
+        OR crct.course_number = ANY(
+            string_to_array(
+                regexp_replace(
+                    regexp_replace(trim($3), '([A-Z])(\d)', '\1 \2', 'g'),
+                    '\s*,\s*',
+                    ',',
+                    'g'
+                ),
+                ','
+            )
+        )
     )
     AND (
         $4 IS NULL OR (

@@ -1,0 +1,30 @@
+{
+    "displayName": "Course Reserves Circulation Stats (Filterable)",
+    "description": "Checkout counts for selected items in course reserves, with optional filters for date range, course codes, and course types to exclude.",
+    "parameters": [
+        {
+            "name": "start_date",
+            "displayName": "Earliest date of circulation activity",
+            "type": "date",
+            "required": false
+        },
+        {
+            "name": "end_date",
+            "displayName": "Latest date of circulation activity",
+            "type": "date",
+            "required": false
+        },
+        {
+            "name": "course_codes",
+            "displayName": "Filter by course codes (e.g. TEST 101, ENGL 39)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "exclusions",
+            "displayName": "Exclude course types (e.g. POP or POP, LAW, EMPTY, NEW, HIST)",
+            "type": "text",
+            "required": false
+        }
+    ]
+}
