@@ -9,20 +9,24 @@ CREATE FUNCTION circ_stats_course_reserves_all(
     exclusions text DEFAULT NULL
 )
 RETURNS TABLE(
+    course_listing_id text,
+    course_number text,
+    item_id text,
     item_barcode text,
     instance_title text,
-    course_number text,
-    circ_count numeric
+    circ_count bigint
 )
 AS $$
 SELECT 
+    crct.course_listing_id,
+    crct.course_number,
+    crrt.item_id,
     iext.barcode AS item_barcode,
     inst.title AS instance_title,
-    crct.course_number AS course_number,
-    COALESCE(lit.clid, 0) AS circ_count
+    COALESCE(lit.circ_count, 0) AS circ_count
 FROM
-    folio_courses.coursereserves_courses__t crct
-LEFT JOIN folio_courses.coursereserves_reserves__t crrt
+    folio_courses.coursereserves_courses__t__ crct
+INNER JOIN folio_courses.coursereserves_reserves__t__ crrt
        ON crct.course_listing_id = crrt.course_listing_id
 LEFT JOIN folio_derived.item_ext iext
        ON crrt.item_id = iext.item_id
@@ -33,7 +37,7 @@ LEFT JOIN folio_derived.instance_ext inst
 LEFT JOIN (
         SELECT 
             item_id,
-            COUNT(loan_id) AS clid
+            COUNT(loan_id) AS circ_count
         FROM folio_derived.loans_items
         WHERE 
             loan_date::date >= start_date
@@ -56,8 +60,8 @@ WHERE
         OR course_codes = ''
         OR crct.course_number = ANY(string_to_array(course_codes, ','))
     )
-GROUP BY 
-    iext.barcode, inst.title, crct.course_number, lit.clid
+ORDER BY 
+    crct.course_number, inst.title
 $$
 LANGUAGE sql
 STABLE
