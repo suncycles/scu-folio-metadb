@@ -43,16 +43,14 @@ LEFT JOIN (
        ON lit.item_id = crrt.item_id
 WHERE 
     crrt.item_id IS NOT NULL
-    -- Exclusion Logic
     AND (
         exclusions IS NULL OR (
             (exclusions NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
-            (exclusions NOT ILIKE '%LAW%' OR (crct.course_number NOT ILIKE 'Law' AND crct.course_number NOT ILIKE 'LAW')) AND
+            (exclusions NOT ILIKE '%LAW%' OR crct.course_number NOT ILIKE 'LAW%') AND 
             (exclusions NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
             (exclusions NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
     )
-    -- Course Code Logic
     AND (
         course_codes IS NULL 
         OR course_codes = ''
