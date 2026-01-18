@@ -4,7 +4,7 @@ DROP FUNCTION IF EXISTS circ_stats_course_reserves_all;
 
 CREATE FUNCTION circ_stats_course_reserves_all(
     start_date date DEFAULT '0001-01-01',
-    end_date   date DEFAULT '9999-12-31'
+    end_date   date DEFAULT '9999-12-31',
     course_codes text DEFAULT NULL,
     exclusions text DEFAULT NULL
 )
@@ -40,25 +40,25 @@ LEFT JOIN (
             COUNT(loan_id) AS circ_count
         FROM folio_derived.loans_items
         WHERE 
-            loan_date::date >= start_date
-            AND loan_date::date <= end_date
+            loan_date::date >= $1
+            AND loan_date::date <= $2
         GROUP BY item_id
 ) lit
        ON lit.item_id = crrt.item_id
 WHERE 
     crrt.item_id IS NOT NULL
     AND (
-        exclusions IS NULL OR (
-            (exclusions NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
-            (exclusions NOT ILIKE '%LAW%' OR crct.course_number NOT ILIKE 'LAW%') AND 
-            (exclusions NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
-            (exclusions NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
+        $4 IS NULL OR (
+            ($4 NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
+            ($4 NOT ILIKE '%LAW%' OR crct.course_number NOT ILIKE 'LAW%') AND 
+            ($4 NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
+            ($4 NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
     )
     AND (
-        course_codes IS NULL 
-        OR course_codes = ''
-        OR crct.course_number = ANY(string_to_array(course_codes, ','))
+        $3 IS NULL 
+        OR $3 = ''
+        OR crct.course_number = ANY(string_to_array($3, ','))
     )
 ORDER BY 
     crct.course_number, inst.title
