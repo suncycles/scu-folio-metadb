@@ -3,8 +3,8 @@
 DROP FUNCTION IF EXISTS circ_stats_course_reserves_all;
 
 CREATE FUNCTION circ_stats_course_reserves_all(
-    start_date date DEFAULT '1900-01-01',
-    end_date   date DEFAULT '2050-01-01',
+    start_date date DEFAULT '0001-01-01',
+    end_date   date DEFAULT '9999-12-31'
     course_codes text DEFAULT NULL,
     exclusions text DEFAULT NULL
 )
@@ -17,7 +17,7 @@ RETURNS TABLE(
     circ_count bigint
 )
 AS $$
-SELECT 
+SELECT DISTINCT
     crct.course_listing_id,
     crct.course_number,
     crrt.item_id,
