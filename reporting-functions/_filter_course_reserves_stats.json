@@ -22,7 +22,7 @@
         },
         {
             "name": "exclusions",
-            "displayName": "Exclude course types (e.g. POP or POP, LAW, EMPTY, NEW, HIST)",
+            "displayName": "Exclude course types [POP, LAW, NEW, EMPTY]",
             "type": "text",
             "required": false
         }
