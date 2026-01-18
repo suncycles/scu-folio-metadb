@@ -48,17 +48,17 @@ LEFT JOIN (
 WHERE 
     crrt.item_id IS NOT NULL
     AND (
+        $3 IS NULL 
+        OR $3 = ''
+        OR crct.course_number = ANY(string_to_array($3, ','))
+    )
+    AND (
         $4 IS NULL OR (
             ($4 NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
             ($4 NOT ILIKE '%LAW%' OR crct.course_number NOT ILIKE 'LAW%') AND 
             ($4 NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
             ($4 NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
-    )
-    AND (
-        $3 IS NULL 
-        OR $3 = ''
-        OR crct.course_number = ANY(string_to_array($3, ','))
     )
 ORDER BY 
     crct.course_number, inst.title
