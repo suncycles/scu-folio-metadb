@@ -55,7 +55,7 @@ WHERE
     AND (
         $4 IS NULL OR (
             ($4 NOT ILIKE '%POP%' OR crct.course_number IS DISTINCT FROM 'POP') AND
-            ($4 NOT ILIKE '%LAW%' OR crct.course_number NOT ILIKE 'LAW%') AND 
+            ($4 NOT ILIKE '%LAW%' OR (crct.course_number IS NULL OR crct.course_number = '' OR crct.course_number NOT ILIKE 'LAW%')) AND 
             ($4 NOT ILIKE '%NEW%' OR crct.course_number IS DISTINCT FROM 'NEW') AND
             ($4 NOT ILIKE '%EMPTY%' OR (crct.course_number IS NOT NULL AND crct.course_number <> ''))
         )
