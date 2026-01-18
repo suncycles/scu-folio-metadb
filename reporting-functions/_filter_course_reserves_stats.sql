@@ -1,8 +1,8 @@
---metadb:function circ_stats_course_reserves_all
+--metadb:function _filter_course_reserves_stats
 
-DROP FUNCTION IF EXISTS circ_stats_course_reserves_all;
+DROP FUNCTION IF EXISTS _filter_course_reserves_stats;
 
-CREATE FUNCTION circ_stats_course_reserves_all(
+CREATE FUNCTION _filter_course_reserves_stats(
     start_date date DEFAULT '0001-01-01',
     end_date   date DEFAULT '9999-12-31',
     course_codes text DEFAULT NULL,
