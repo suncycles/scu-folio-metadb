@@ -15,6 +15,12 @@
             "required": false
         },
         {
+            "name": "term_name",
+            "displayName": "Term (e.g. 2025 Spring Quarter, Law 2025 Spring)",
+            "type": "text",
+            "required": false
+        },
+        {
             "name": "course_codes",
             "displayName": "Filter by course codes (e.g. TEST 101, ENGL 39)",
             "type": "text",
@@ -23,6 +29,18 @@
         {
             "name": "exclusions",
             "displayName": "Exclude course types [POP, LAW, NEW, EMPTY]",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "show_historical_data",
+            "displayName": "Show historical data (1=yes, 0=no)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "show_historical_courses",
+            "displayName": "Show historical courses under same name (1=yes, 0=no)",
             "type": "text",
             "required": false
         }
