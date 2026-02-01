@@ -8,8 +8,7 @@ CREATE FUNCTION _filter_course_reserves_stats(
     term_name text DEFAULT NULL,
     course_codes text DEFAULT NULL,
     exclusions text DEFAULT NULL,
-    show_historical_data text DEFAULT NULL,
-    show_historical_courses text DEFAULT NULL
+    show_historical_data text DEFAULT NULL
 )
 RETURNS TABLE(
     course_listing_id text,
@@ -72,6 +71,7 @@ LEFT JOIN LATERAL (
 WHERE 
     reserves.item_id IS NOT NULL
     -- Filter by __current unless show_historical_data = '1'
+    -- When show_historical_data = '1', show all reserves (current and historical)
     AND (
         $6 = '1' OR reserves.__current = true
     )
@@ -100,10 +100,11 @@ WHERE
             ($5 NOT ILIKE '%EMPTY%' OR (courses.course_number IS NOT NULL AND courses.course_number <> ''))
         )
     )
-    -- Filter by active courses unless show_historical_courses = '1'
+    -- Filter by active courses unless show_historical_data = '1'
     -- A course is active if current date is between the term's start and end dates
+    -- When show_historical_data = '1', show all courses (active and historical)
     AND (
-        $7 = '1' 
+        $6 = '1' 
         OR terms.id IS NULL 
         OR (CURRENT_DATE >= terms.start_date AND CURRENT_DATE <= terms.end_date)
     )

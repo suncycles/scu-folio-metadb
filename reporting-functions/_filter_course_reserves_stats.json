@@ -37,12 +37,6 @@
             "displayName": "Show historical data (1=yes, 0=no)",
             "type": "text",
             "required": false
-        },
-        {
-            "name": "show_historical_courses",
-            "displayName": "Show historical courses under same name (1=yes, 0=no)",
-            "type": "text",
-            "required": false
         }
     ]
 }

@@ -1,0 +1,33 @@
+implement extra filtering based on this requirements:
+firstly, change logic to only show books where coursereserves_reserves__t__.__current = True (boolean)
+- next, allow the user to filter by 'Show historical data' using the json. This will have to be a text field, input 1 or 0 in the text field to indicate yes or no, due to technical limitations.
+-- if 1, then do not filter by __current. add a return field to show whether it is current or not. 
+
+next, 
+
+- User can input a 'Term', instead of filtering by a date range. The list of possible terms is as follows: 
+Law 2025 Spring
+2024 Fall Quarter
+2025 Winter Quarter
+2025 Spring Quarter
+2024 Summer Session
+Permanent
+Law 2024 Summer
+Law 2024 Fall
+2025 Summer Term
+2025 Fall Quarter
+2026 Winter Quarter
+2026 Spring Quarter
+Law 2025 Summer
+Law 2025 Fall
+Law 2026 Spring
+
+define coursereserves_terms__t__ as terms
+This input exists on terms.name
+based on input if a matching term is found, this will filter by checkout dates terms.start_date and terms.end_date, instead of $1 and $2.
+
+next, we have to filter by currently running courses, as the current logic pulls from historical courses. 
+Allow to user to filter by "show historical course under same name", using the same 1/0 text box. If it is 0 or empty, follow this logic.
+--- match coursereserves_courses__t__.course_listing_id to coursereserves_courselistings__t__.id 
+--- take those and filter for terms.term_id, and find the term's start/end date using terms.start_date and terms.end_date. if the CURRENT TIME is between those two dates, then the course is ACTIVE. We only want to see results from active courses.
+
