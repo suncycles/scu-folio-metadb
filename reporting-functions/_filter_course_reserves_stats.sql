@@ -11,14 +11,14 @@ CREATE FUNCTION _filter_course_reserves_stats(
     show_historical_data text DEFAULT NULL
 )
 RETURNS TABLE(
-    -- course_listing_id text,
     course_number text,
-    -- item_id text,
     item_barcode text,
     call_number text,
     instance_title text,
     circ_count bigint,
-    -- is_current boolean
+    is_current boolean,
+    course_listing_id text,    
+    item_id text,
 )
 AS $$
 SELECT DISTINCT
