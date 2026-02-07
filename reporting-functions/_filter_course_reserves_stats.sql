@@ -11,13 +11,14 @@ CREATE FUNCTION _filter_course_reserves_stats(
     show_historical_data text DEFAULT NULL
 )
 RETURNS TABLE(
-    course_listing_id text,
+    -- course_listing_id text,
     course_number text,
-    item_id text,
+    -- item_id text,
     item_barcode text,
+    call_number text,
     instance_title text,
     circ_count bigint,
-    is_current boolean
+    -- is_current boolean
 )
 AS $$
 SELECT DISTINCT
@@ -26,6 +27,7 @@ SELECT DISTINCT
     reserves.item_id,
     iext.barcode AS item_barcode,
     inst.title AS instance_title,
+    iext.effective_call_number AS call_number,
     COALESCE(lit.circ_count, 0) AS circ_count,
     reserves.__current AS is_current -- Show if the reserve is current
 FROM 
