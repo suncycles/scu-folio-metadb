@@ -17,19 +17,19 @@ RETURNS TABLE(
     instance_title text,
     circ_count bigint,
     is_current boolean,
-    course_listing_id text,    
-    item_id text,
+    course_listing_id text,
+    item_id text
 )
 AS $$
 SELECT DISTINCT
-    courses.course_listing_id,
     courses.course_number,
-    reserves.item_id,
     iext.barcode AS item_barcode,
-    inst.title AS instance_title,
     iext.effective_call_number AS call_number,
+    inst.title AS instance_title,
     COALESCE(lit.circ_count, 0) AS circ_count,
-    reserves.__current AS is_current -- Show if the reserve is current
+    reserves.__current AS is_current,
+    courses.course_listing_id,
+    reserves.item_id
 FROM 
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
