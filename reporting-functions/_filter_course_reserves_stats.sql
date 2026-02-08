@@ -26,7 +26,7 @@ SELECT DISTINCT
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
     inst.title AS instance_title,
-    COALESCE(lit.circ_count, 0) AS circ_count,
+    COUNT(li.loan_id) AS circ_count,
     reserves.__current AS is_current,
     courses.course_listing_id,
     reserves.item_id
@@ -46,18 +46,18 @@ LEFT JOIN folio_derived.holdings_ext hrt
        ON iext.holdings_record_id = hrt.holdings_id
 LEFT JOIN folio_derived.instance_ext inst -- get human readable title
        ON hrt.instance_id = inst.instance_id
-LEFT JOIN LATERAL (
-        SELECT -- Count checkouts per item only during the course's active term period
-            item_id,
-            COUNT(loan_id) AS circ_count
-        FROM folio_derived.loans_items
-        WHERE 
-            -- Only count circulation during the course term dates.
-            loan_date::date >= COALESCE(terms.start_date, $1)
-            AND loan_date::date <= COALESCE(terms.end_date, $2)
-            AND item_id = reserves.item_id
-        GROUP BY item_id
-) lit ON true
+LEFT JOIN folio_derived.loans_items li
+       ON iext.item_id = li.item_id
+       AND li.loan_date::date >= COALESCE(terms.start_date, $1)
+       AND li.loan_date::date <= COALESCE(terms.end_date, $2)
+GROUP BY
+    courses.course_listing_id,
+    courses.course_number,
+    reserves.item_id,
+    iext.barcode,
+    iext.effective_call_number,
+    inst.title,
+    reserves.__current
 WHERE 
     reserves.item_id IS NOT NULL
     -- Filter by __current unless show_historical_data = '1'
