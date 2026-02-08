@@ -16,7 +16,7 @@ RETURNS TABLE(
     item_barcode text,
     call_number text,
     instance_title text,
-    circ_count bigint,
+    checkout_count bigint,
     is_current boolean,
     course_listing_id text,
     item_id text
@@ -27,7 +27,7 @@ SELECT DISTINCT
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
     inst.title AS instance_title,
-    COUNT(li.loan_id) AS circ_count,
+    COUNT(li.item_id) AS checkout_count,
     reserves.__current AS is_current,
     courses.course_listing_id,
     reserves.item_id
