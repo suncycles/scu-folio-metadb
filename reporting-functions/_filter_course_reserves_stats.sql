@@ -50,14 +50,6 @@ LEFT JOIN folio_derived.loans_items li
        ON iext.item_id = li.item_id
        AND li.loan_date::date >= COALESCE(terms.start_date, $1)
        AND li.loan_date::date <= COALESCE(terms.end_date, $2)
-GROUP BY
-    courses.course_listing_id,
-    courses.course_number,
-    reserves.item_id,
-    iext.barcode,
-    iext.effective_call_number,
-    inst.title,
-    reserves.__current
 WHERE 
     reserves.item_id IS NOT NULL
     -- Filter by __current unless show_historical_data = '1'
@@ -98,6 +90,14 @@ WHERE
         OR terms.id IS NULL 
         OR (CURRENT_DATE >= terms.start_date AND CURRENT_DATE <= terms.end_date)
     )
+GROUP BY
+    courses.course_listing_id,
+    courses.course_number,
+    reserves.item_id,
+    iext.barcode,
+    iext.effective_call_number,
+    inst.title,
+    reserves.__current
 ORDER BY 
     courses.course_number, inst.title
 $$
