@@ -1,0 +1,30 @@
+{
+  "name": "checkout_counts",
+  "title": "Checkout Counts",
+  "description": "Get checkout history for an item by barcode, including date and time of each checkout",
+  "parameters": [
+    {
+      "name": "barcode",
+      "type": "text",
+      "required": true,
+      "description": "Item barcode"
+    }
+  ],
+  "columns": [
+    {
+      "name": "item_barcode",
+      "type": "text",
+      "description": "The item's barcode"
+    },
+    {
+      "name": "loan_date",
+      "type": "timestamp",
+      "description": "Full timestamp of the checkout (date and time)"
+    },
+    {
+      "name": "loan_time",
+      "type": "time",
+      "description": "Time portion of the checkout"
+    }
+  ]
+}
