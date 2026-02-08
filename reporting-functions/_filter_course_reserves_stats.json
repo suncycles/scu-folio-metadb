@@ -33,8 +33,14 @@
             "required": false
         },
         {
-            "name": "show_historical_data",
-            "displayName": "Show historical data (1=yes, 0=no)",
+            "name": "show_historical_reserves",
+            "displayName": "Show historical reserves (1 to toggle ON)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "show_historical_checkouts",
+            "displayName": "Show historical checkouts (1 to toggle ON)",
             "type": "text",
             "required": false
         }
