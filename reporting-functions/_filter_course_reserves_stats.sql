@@ -27,7 +27,7 @@ SELECT DISTINCT
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
     inst.title AS instance_title,
-    COUNT(li.item_id) AS checkout_count,
+    COUNT(li.__id) AS checkout_count,
     reserves.__current AS is_current,
     courses.course_listing_id,
     reserves.item_id
@@ -47,12 +47,12 @@ LEFT JOIN folio_derived.holdings_ext hrt
        ON iext.holdings_record_id = hrt.holdings_id
 LEFT JOIN folio_derived.instance_ext inst -- get human readable title
        ON hrt.instance_id = inst.instance_id
-LEFT JOIN folio_derived.loans_items li
+LEFT JOIN folio_circulation.loan__t__ li
        ON iext.item_id = li.item_id
        AND (
            $7 = '1' OR (
-               li.loan_date::date >= COALESCE(terms.start_date, $1)
-               AND li.loan_date::date <= COALESCE(terms.end_date, $2)
+               li.__start::date >= COALESCE(terms.start_date, $1)
+               AND li.__start::date <= COALESCE(terms.end_date, $2)
            )
        )
 WHERE 
