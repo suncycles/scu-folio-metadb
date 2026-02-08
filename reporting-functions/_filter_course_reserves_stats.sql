@@ -47,26 +47,14 @@ LEFT JOIN folio_derived.holdings_ext hrt
 LEFT JOIN folio_derived.instance_ext inst -- get human readable title
        ON hrt.instance_id = inst.instance_id
 LEFT JOIN LATERAL (
-        SELECT -- Count checkouts per item, using term dates if term_name provided
+        SELECT -- Count checkouts per item only during the course's active term period
             item_id,
             COUNT(loan_id) AS circ_count
         FROM folio_derived.loans_items
         WHERE 
-            -- Use term dates if term_name is provided and matched, otherwise use date parameters
-            loan_date::date >= COALESCE(
-                CASE WHEN $3 IS NOT NULL AND $3 <> '' AND terms.name = $3 
-                     THEN terms.start_date 
-                     ELSE NULL 
-                END,
-                $1
-            )
-            AND loan_date::date <= COALESCE(
-                CASE WHEN $3 IS NOT NULL AND $3 <> '' AND terms.name = $3 
-                     THEN terms.end_date 
-                     ELSE NULL 
-                END,
-                $2
-            )
+            -- Only count circulation during the course term dates.
+            loan_date::date >= COALESCE(terms.start_date, $1)
+            AND loan_date::date <= COALESCE(terms.end_date, $2)
             AND item_id = reserves.item_id
         GROUP BY item_id
 ) lit ON true

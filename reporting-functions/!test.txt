@@ -1,0 +1,27 @@
+Possible course_listing_id for
+
+Test101: 
+‘b52746c2-d0e4-41ad-b82a-7c51a249d117’,
+‘49565a81-4064-4fc0-8504-b4c186cc112d’,
+‘49565a81-4064-4fc0-8504-b4c186cc112d’,
+‘2a847f5d-ae3a-46dc-9c15-877fb7071ee8’,
+
+Test102:
+‘da258e53-01ca-4c14-b963-09b1bd64b42a’
+
+select reserves where these match returns 
+item ids:
+('0ccfae8b-754b-502f-914d-e4ae62ecadcd',
+'4e9552e3-de19-5228-8557-347e8fe1e7ba',
+'93ff727d-6d65-5e53-9a67-6a4be0e13b54',
+'1992c61a-77e7-519f-9e8f-773a849485ae',
+'3cb165ef-23c6-58f5-a623-c25a75e570e2',  _c
+'063dc175-b463-4c4f-8087-12846f91fc3a',  _c
+'5af5a201-36ba-5895-87a1-719549841d16')  _c
+
+
+Only take circ history from a book during its existence in coursereserves 
+- check when course was active using terms.start_date and terms.end_date
+then, only count the circ history if it was in that time frame
+
+
