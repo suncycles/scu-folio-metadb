@@ -8,13 +8,13 @@ CREATE FUNCTION _checkout_counts(
 RETURNS TABLE(
     item_barcode text,
     loan_date timestamp,
-    loan_time time
+    loan_time text
 )
 AS $$
 SELECT 
     iext.barcode AS item_barcode,
     li.loan_date AS loan_date,
-    li.loan_date::time AS loan_time
+    li.loan_date::time::text AS loan_time
 FROM folio_derived.item_ext iext
 INNER JOIN folio_derived.loans_items li
     ON iext.item_id = li.item_id
