@@ -81,10 +81,10 @@ WHERE
     AND (
         $4 IS NULL 
         OR $4 = ''
-        OR courses.course_number = ANY(
+        OR upper(courses.course_number) = ANY(
             string_to_array(
                 regexp_replace(
-                    regexp_replace(trim($4), '([A-Z])(\d)', '\1 \2', 'g'),
+                    regexp_replace(upper(trim($4)), '([A-Z])(\d)', '\1 \2', 'g'),
                     '\s*,\s*',
                     ',',
                     'g'
