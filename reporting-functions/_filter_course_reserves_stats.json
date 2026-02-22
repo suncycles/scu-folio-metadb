@@ -16,7 +16,7 @@
         },
         {
             "name": "term_name",
-            "displayName": "Term (e.g. 2025 Spring Quarter, Law 2025 Spring)",
+            "displayName": "Term (e.g. 2025 Spring Quarter, Law 2025 Spring). Defaults to Today's term. To view past history, use filter below.",
             "type": "text",
             "required": false
         },

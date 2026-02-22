@@ -33,8 +33,18 @@ SELECT DISTINCT
     reserves.__current AS is_current,
     courses.course_listing_id,
     reserves.item_id,
-    COALESCE(terms.start_date, $1) AS debug_start_date,
-    COALESCE(terms.end_date, $2) AS debug_end_date
+    COALESCE(
+        (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+        (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+        terms.start_date,
+        $1
+    ) AS debug_start_date,
+    COALESCE(
+        (SELECT t2.end_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+        (SELECT t3.end_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+        terms.end_date,
+        $2
+    ) AS debug_end_date
 FROM 
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
@@ -55,8 +65,18 @@ LEFT JOIN folio_circulation.loan__t__ li
        ON iext.item_id = li.item_id
        AND (
            $7 = '1' OR (
-               li.__start::date >= COALESCE(terms.start_date, $1)
-               AND li.__start::date <= COALESCE(terms.end_date, $2)
+               li.__start::date >= COALESCE(
+                   (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+                   (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+                   terms.start_date,
+                   $1
+               )
+               AND li.__start::date <= COALESCE(
+                   (SELECT t2.end_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+                   (SELECT t3.end_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+                   terms.end_date,
+                   $2
+               )
            )
        ) AND (
             li.action='checkedout' OR li.action='renewed'
@@ -109,8 +129,18 @@ GROUP BY
     iext.effective_call_number,
     inst.title,
     reserves.__current,
-    COALESCE(terms.start_date, $1),
-    COALESCE(terms.end_date, $2)
+    COALESCE(
+        (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+        (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+        terms.start_date,
+        $1
+    ),
+    COALESCE(
+        (SELECT t2.end_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
+        (SELECT t3.end_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
+        terms.end_date,
+        $2
+    )
 ORDER BY 
     courses.course_number, inst.title
 $$
