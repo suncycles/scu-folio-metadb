@@ -9,12 +9,14 @@ RETURNS TABLE(
     item_barcode text,
     loan_date timestamp,
     loan_time text
+    loan_action text
 )
 AS $$
 SELECT 
     iext.barcode AS item_barcode,
     li.__start AS loan_date,
     li.__start::time::text AS loan_time
+    li.action AS loan_action
 FROM folio_derived.item_ext iext
 INNER JOIN folio_circulation.loan__t__ li
     ON iext.item_id = li.item_id

@@ -19,7 +19,9 @@ RETURNS TABLE(
     checkout_count bigint,
     is_current boolean,
     course_listing_id text,
-    item_id text
+    item_id text,
+    debug_start_date date,
+    debug_end_date date
 )
 AS $$
 SELECT DISTINCT
@@ -30,7 +32,9 @@ SELECT DISTINCT
     COUNT(li.__id) AS checkout_count,
     reserves.__current AS is_current,
     courses.course_listing_id,
-    reserves.item_id
+    reserves.item_id,
+    COALESCE(terms.start_date, $1) AS debug_start_date,
+    COALESCE(terms.end_date, $2) AS debug_end_date
 FROM 
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
