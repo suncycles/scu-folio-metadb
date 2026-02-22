@@ -108,7 +108,9 @@ GROUP BY
     iext.barcode,
     iext.effective_call_number,
     inst.title,
-    reserves.__current
+    reserves.__current,
+    COALESCE(terms.start_date, $1),
+    COALESCE(terms.end_date, $2)
 ORDER BY 
     courses.course_number, inst.title
 $$

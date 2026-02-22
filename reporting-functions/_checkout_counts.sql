@@ -8,7 +8,7 @@ CREATE FUNCTION _checkout_counts(
 RETURNS TABLE(
     item_barcode text,
     loan_date timestamp,
-    loan_time text
+    loan_time text,
     loan_action text
 )
 AS $$
