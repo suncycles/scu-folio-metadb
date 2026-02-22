@@ -54,6 +54,8 @@ LEFT JOIN folio_circulation.loan__t__ li
                li.__start::date >= COALESCE(terms.start_date, $1)
                AND li.__start::date <= COALESCE(terms.end_date, $2)
            )
+       ) AND (
+            li.action='checkedout' OR li.action='renewed'
        )
 WHERE 
     reserves.item_id IS NOT NULL
