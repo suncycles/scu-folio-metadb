@@ -12,6 +12,7 @@ CREATE FUNCTION _filter_course_reserves_stats(
     show_historical_checkouts text DEFAULT NULL
 )
 RETURNS TABLE(
+    course_term text,
     course_number text,
     item_barcode text,
     call_number text,
@@ -25,6 +26,10 @@ RETURNS TABLE(
 )
 AS $$
 SELECT DISTINCT
+    CASE
+        WHEN reserves.start_date = terms.start_date THEN terms.name
+        ELSE NULL
+    END AS course_term,
     courses.course_number,
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
@@ -129,6 +134,10 @@ GROUP BY
     iext.effective_call_number,
     inst.title,
     reserves.__current,
+    CASE
+        WHEN reserves.start_date = terms.start_date THEN terms.name
+        ELSE NULL
+    END,
     COALESCE(
         (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
         (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
