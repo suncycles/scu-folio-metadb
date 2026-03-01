@@ -123,7 +123,7 @@ GROUP BY
     reserves.__current,
     term_resolved.name
 ORDER BY
-    courses.course_number, inst.title
+    course_term
 $$
 LANGUAGE sql
 STABLE
