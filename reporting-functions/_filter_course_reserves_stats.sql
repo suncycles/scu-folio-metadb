@@ -21,8 +21,7 @@ RETURNS TABLE(
     is_current boolean,
     course_listing_id text,
     item_id text,
-    debug_start_date date,
-    debug_end_date date
+    reserves_start_date date,
 )
 AS $$
 SELECT DISTINCT
@@ -38,18 +37,7 @@ SELECT DISTINCT
     reserves.__current AS is_current,
     courses.course_listing_id,
     reserves.item_id,
-    COALESCE(
-        (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
-        (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
-        terms.start_date,
-        $1
-    ) AS debug_start_date,
-    COALESCE(
-        (SELECT t2.end_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
-        (SELECT t3.end_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
-        terms.end_date,
-        $2
-    ) AS debug_end_date
+    reserves.start_date AS reserves_start_date
 FROM 
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
