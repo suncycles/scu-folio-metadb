@@ -18,7 +18,7 @@ RETURNS TABLE(
     call_number text,
     instance_title text,
     checkout_count bigint,
-    is_current boolean,
+    is_current integer,
     course_listing_id text,
     item_id text,
     reserves_start_date date
@@ -31,7 +31,7 @@ SELECT
     iext.effective_call_number AS call_number,
     inst.title AS instance_title,
     COUNT(li.__id) AS checkout_count,
-    reserves.__current AS is_current,
+    CASE WHEN reserves.__current THEN 1 ELSE 0 END AS is_current,
     courses.course_listing_id,
     reserves.item_id,
     reserves.start_date AS reserves_start_date
@@ -40,7 +40,7 @@ FROM
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
        ON courses.course_listing_id = reserves.course_listing_id
 -- Join to courselistings using the course record id, then join to terms
-LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings
+INNER JOIN folio_courses.coursereserves_courselistings__t__ listings
     ON courses.id = listings.id
 -- Join to terms table for term-based date filtering and active course filtering
 LEFT JOIN folio_courses.coursereserves_terms__t__ terms
