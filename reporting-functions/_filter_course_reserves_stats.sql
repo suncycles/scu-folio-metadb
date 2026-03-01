@@ -24,11 +24,14 @@ RETURNS TABLE(
     reserves_start_date date
 )
 AS $$
-SELECT DISTINCT
-    CASE
-        WHEN reserves.start_date = terms.start_date THEN terms.name
-        ELSE NULL
-    END AS course_term,
+SELECT
+    (
+        SELECT t_match.name
+        FROM folio_courses.coursereserves_terms__t__ t_match
+        WHERE t_match.start_date::date = reserves.start_date::date
+        ORDER BY t_match.start_date DESC
+        LIMIT 1
+    ) AS course_term,
     courses.course_number,
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
@@ -123,10 +126,13 @@ GROUP BY
     iext.effective_call_number,
     inst.title,
     reserves.__current,
-    CASE
-        WHEN reserves.start_date = terms.start_date THEN terms.name
-        ELSE NULL
-    END,
+    (
+        SELECT t_match.name
+        FROM folio_courses.coursereserves_terms__t__ t_match
+        WHERE t_match.start_date::date = reserves.start_date::date
+        ORDER BY t_match.start_date DESC
+        LIMIT 1
+    ),
     COALESCE(
         (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
         (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
