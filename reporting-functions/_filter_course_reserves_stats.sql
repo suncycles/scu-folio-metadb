@@ -39,9 +39,9 @@ FROM
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
        ON courses.course_listing_id = reserves.course_listing_id
--- Join to courselistings using the course record id, then join to terms
+-- Join to courselistings using course_listing_id, then join to terms
 INNER JOIN folio_courses.coursereserves_courselistings__t__ listings
-    ON courses.id = listings.id
+    ON courses.course_listing_id = listings.id
 -- Join to terms table for term-based date filtering and active course filtering
 LEFT JOIN folio_courses.coursereserves_terms__t__ terms
     ON listings.term_id = terms.id
