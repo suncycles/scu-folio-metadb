@@ -71,7 +71,9 @@ LEFT JOIN folio_circulation.loan__t__ li
        ON iext.item_id = li.item_id
       AND (li.action = 'checkedout' OR li.action = 'renewed')
       AND (
-          $7 = '1' OR reserves.__current = true
+          coalesce(trim($4), '') <> ''
+          OR lower(coalesce(trim($7), '')) IN ('1', 'true', 't', 'yes', 'y', 'on')
+          OR reserves.__current = true
       )
 WHERE
     reserves.item_id IS NOT NULL
@@ -81,7 +83,9 @@ WHERE
         OR term_resolved.name IS NOT NULL
     )
     AND (
-        $6 = '1' OR reserves.__current = true
+        coalesce(trim($4), '') <> ''
+        OR lower(coalesce(trim($6), '')) IN ('1', 'true', 't', 'yes', 'y', 'on')
+        OR reserves.__current = true
     )
     AND (
         $4 IS NULL
