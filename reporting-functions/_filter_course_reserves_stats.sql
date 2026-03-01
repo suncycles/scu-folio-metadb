@@ -118,6 +118,7 @@ GROUP BY
     courses.course_listing_id,
     courses.course_number,
     reserves.item_id,
+    reserves.start_date,
     iext.barcode,
     iext.effective_call_number,
     inst.title,
