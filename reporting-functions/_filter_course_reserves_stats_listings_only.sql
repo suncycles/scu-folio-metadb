@@ -71,8 +71,7 @@ LEFT JOIN folio_circulation.loan__t__ li
        ON iext.item_id = li.item_id
       AND (li.action = 'checkedout' OR li.action = 'renewed')
       AND (
-          $7 = '1'
-          OR reserves.__current = true
+          $7 = '1' OR reserves.__current = true
       )
 WHERE
     reserves.item_id IS NOT NULL
@@ -87,7 +86,7 @@ WHERE
     AND (
         $4 IS NULL
         OR $4 = ''
-        OR upper(courses.course_number) = ANY(
+        OR regexp_replace(upper(trim(courses.course_number)), '([A-Z])(\d)', '\1 \2', 'g') = ANY(
             string_to_array(
                 regexp_replace(
                     regexp_replace(upper(trim($4)), '([A-Z])(\d)', '\1 \2', 'g'),
