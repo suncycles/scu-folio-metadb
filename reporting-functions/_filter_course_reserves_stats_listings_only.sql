@@ -39,10 +39,20 @@ FROM
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
        ON courses.course_listing_id = reserves.course_listing_id
-INNER JOIN folio_courses.coursereserves_courselistings__t__ listings
-       ON courses.course_listing_id = listings.id
+    LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings
+           ON courses.course_listing_id = listings.id
+    LEFT JOIN LATERAL (
+        SELECT c_same.course_listing_id AS same_course_listing_id
+        FROM folio_courses.coursereserves_courses__t__ c_same
+        WHERE c_same.course_number = courses.course_number
+          AND c_same.course_listing_id <> courses.course_listing_id
+        ORDER BY c_same.course_listing_id
+        LIMIT 1
+    ) course_same ON true
+    LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings_same
+           ON course_same.same_course_listing_id = listings_same.id
 LEFT JOIN folio_courses.coursereserves_terms__t__ terms
-       ON listings.term_id = terms.id
+           ON terms.id = COALESCE(listings.term_id, listings_same.term_id)
 LEFT JOIN folio_derived.item_ext iext
        ON reserves.item_id = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt
