@@ -21,7 +21,7 @@ RETURNS TABLE(
     is_current boolean,
     course_listing_id text,
     item_id text,
-    reserves_start_date date,
+    reserves_start_date date
 )
 AS $$
 SELECT DISTINCT
