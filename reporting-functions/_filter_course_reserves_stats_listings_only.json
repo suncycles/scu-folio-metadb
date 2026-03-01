@@ -1,0 +1,48 @@
+{
+    "displayName": "Course Reserves Circulation Stats (Listings-Only Term Logic)",
+    "description": "Checkout counts for selected items in course reserves, using only course listing -> term relationships for term resolution (no term date comparisons).",
+    "parameters": [
+        {
+            "name": "start_date",
+            "displayName": "Earliest date of circulation activity (kept for compatibility)",
+            "type": "date",
+            "required": false
+        },
+        {
+            "name": "end_date",
+            "displayName": "Latest date of circulation activity (kept for compatibility)",
+            "type": "date",
+            "required": false
+        },
+        {
+            "name": "term_name",
+            "displayName": "Term name (exact match)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "course_codes",
+            "displayName": "Filter by course codes (e.g. TEST 101, ENGL 39)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "exclusions",
+            "displayName": "Exclude course types [POP, LAW, NEW, EMPTY]",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "show_historical_reserves",
+            "displayName": "Show historical reserves (1 to toggle ON)",
+            "type": "text",
+            "required": false
+        },
+        {
+            "name": "show_historical_checkouts",
+            "displayName": "Show historical checkouts (1 to toggle ON)",
+            "type": "text",
+            "required": false
+        }
+    ]
+}
