@@ -1,0 +1,12 @@
+{
+    "displayName": "DEBUG: Course reserves by course number",
+    "description": "Shows all matching course listing IDs for a course code and reserve-row coverage (current/historical/item-linked) to diagnose missing results.",
+    "parameters": [
+        {
+            "name": "course_code",
+            "displayName": "Course code (e.g. TEST 104)",
+            "type": "text",
+            "required": true
+        }
+    ]
+}

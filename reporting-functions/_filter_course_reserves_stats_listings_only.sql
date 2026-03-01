@@ -52,7 +52,8 @@ LEFT JOIN LATERAL (
                     OR c_same.course_listing_id <> courses.course_listing_id
             )
             AND (
-                    $3 IS NULL
+                coalesce(trim($4), '') <> ''
+                OR $3 IS NULL
                     OR $3 = ''
                     OR t.name = $3
             )
@@ -78,7 +79,8 @@ LEFT JOIN folio_circulation.loan__t__ li
 WHERE
     reserves.item_id IS NOT NULL
     AND (
-        $3 IS NULL
+        coalesce(trim($4), '') <> ''
+        OR $3 IS NULL
         OR $3 = ''
         OR term_resolved.name IS NOT NULL
     )
