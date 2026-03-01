@@ -25,7 +25,7 @@ RETURNS TABLE(
 )
 AS $$
 SELECT
-    terms.name AS course_term,
+    term_resolved.name AS course_term,
     courses.course_number,
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
@@ -39,20 +39,28 @@ FROM
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
        ON courses.course_listing_id = reserves.course_listing_id
-    LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings
-           ON courses.course_listing_id = listings.id
-    LEFT JOIN LATERAL (
-        SELECT c_same.course_listing_id AS same_course_listing_id
+LEFT JOIN LATERAL (
+        SELECT t.name
         FROM folio_courses.coursereserves_courses__t__ c_same
+        INNER JOIN folio_courses.coursereserves_courselistings__t__ l_same
+                        ON c_same.course_listing_id = l_same.id
+        INNER JOIN folio_courses.coursereserves_terms__t__ t
+                        ON l_same.term_id = t.id
         WHERE c_same.course_number = courses.course_number
-          AND c_same.course_listing_id <> courses.course_listing_id
-        ORDER BY c_same.course_listing_id
+            AND (
+                    l_same.id = courses.course_listing_id
+                    OR c_same.course_listing_id <> courses.course_listing_id
+            )
+            AND (
+                    $3 IS NULL
+                    OR $3 = ''
+                    OR t.name = $3
+            )
+        ORDER BY
+            CASE WHEN l_same.id = courses.course_listing_id THEN 0 ELSE 1 END,
+            t.start_date DESC
         LIMIT 1
-    ) course_same ON true
-    LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings_same
-           ON course_same.same_course_listing_id = listings_same.id
-LEFT JOIN folio_courses.coursereserves_terms__t__ terms
-           ON terms.id = COALESCE(listings.term_id, listings_same.term_id)
+) term_resolved ON true
 LEFT JOIN folio_derived.item_ext iext
        ON reserves.item_id = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt
@@ -71,7 +79,7 @@ WHERE
     AND (
         $3 IS NULL
         OR $3 = ''
-        OR terms.name = $3
+        OR term_resolved.name IS NOT NULL
     )
     AND (
         $6 = '1' OR reserves.__current = true
@@ -108,7 +116,7 @@ GROUP BY
     iext.effective_call_number,
     inst.title,
     reserves.__current,
-    terms.name
+    term_resolved.name
 ORDER BY
     courses.course_number, inst.title
 $$
