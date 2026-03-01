@@ -25,13 +25,7 @@ RETURNS TABLE(
 )
 AS $$
 SELECT
-    (
-        SELECT t_match.name
-        FROM folio_courses.coursereserves_terms__t__ t_match
-        WHERE t_match.start_date::date = reserves.start_date::date
-        ORDER BY t_match.start_date DESC
-        LIMIT 1
-    ) AS course_term,
+    terms.name AS course_term,
     courses.course_number,
     iext.barcode AS item_barcode,
     iext.effective_call_number AS call_number,
@@ -45,12 +39,12 @@ FROM
     folio_courses.coursereserves_courses__t__ courses
 INNER JOIN folio_courses.coursereserves_reserves__t__ reserves
        ON courses.course_listing_id = reserves.course_listing_id
--- Join to courselistings to get term_id for filtering active courses
-LEFT JOIN folio_courses.coursereserves_courselistings__t__ courselistings
-       ON courses.course_listing_id = courselistings.id
+-- Join to courselistings using the course record id, then join to terms
+LEFT JOIN folio_courses.coursereserves_courselistings__t__ listings
+    ON courses.id = listings.id
 -- Join to terms table for term-based date filtering and active course filtering
 LEFT JOIN folio_courses.coursereserves_terms__t__ terms
-       ON courselistings.term_id = terms.id
+    ON listings.term_id = terms.id
 LEFT JOIN folio_derived.item_ext iext
        ON reserves.item_id = iext.item_id
 LEFT JOIN folio_derived.holdings_ext hrt 
@@ -126,25 +120,7 @@ GROUP BY
     iext.effective_call_number,
     inst.title,
     reserves.__current,
-    (
-        SELECT t_match.name
-        FROM folio_courses.coursereserves_terms__t__ t_match
-        WHERE t_match.start_date::date = reserves.start_date::date
-        ORDER BY t_match.start_date DESC
-        LIMIT 1
-    ),
-    COALESCE(
-        (SELECT t2.start_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
-        (SELECT t3.start_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
-        terms.start_date,
-        $1
-    ),
-    COALESCE(
-        (SELECT t2.end_date FROM folio_courses.coursereserves_terms__t__ t2 WHERE t2.name = $3 LIMIT 1),
-        (SELECT t3.end_date FROM folio_courses.coursereserves_terms__t__ t3 WHERE CURRENT_DATE >= t3.start_date AND CURRENT_DATE <= t3.end_date LIMIT 1),
-        terms.end_date,
-        $2
-    )
+    terms.name
 ORDER BY 
     courses.course_number, inst.title
 $$
